@@ -17,7 +17,7 @@ ROMAN_VALUES = [1, 5, 10, 50, 100, 500, 1000]
 RAMON_NUMBERS = dict(zip(ROMAN_NUMERALS, (ROMAN_VALUES)))
 ROMAN_CARDINAL_VALUE = dict(zip(ROMAN_NUMERALS, enumerate(ROMAN_VALUES)))
 
-NORMALISATION = {'BASE', 'NORMAL', 'SHORT_NORMAL', 'OPTIMIZED'}
+NORMALISATION = {'BASE', 'NORMAL', 'SHORT'}
 
 
 def get_numeral_iterator(numeral):
@@ -78,10 +78,14 @@ def convert_to_arabic(numeral):
     return num_sum
 
 
-def convert_to_roman(number: str, normalisation=None):
-    if normalisation == 'BASE' or None:
-        pass
-    pass
+def convert_to_roman(number: int, normalisation=None):
+    if normalisation == 'NORMAL':
+        numeral = convert_to_roman_normal(number)
+    elif normalisation == 'SHORT':
+        numeral = convert_to_roman_short(number)
+    else:
+        numeral = convert_to_roman_base(number)
+    return numeral
 
 
 def convert_to_roman_base(number: int):
@@ -95,4 +99,38 @@ def convert_to_roman_base(number: int):
         number -= ROMAN_VALUES[idx]
         if number == 0:
             break
+    return numeral
+
+
+def replace_4_clusters(numeral: str):
+    numeral = numeral.replace('VIIII', 'IX')
+    numeral = numeral.replace('LXXXX', 'XC')
+    numeral = numeral.replace('DCCCC', 'CM')
+
+    numeral = numeral.replace('IIII', 'IV')
+    numeral = numeral.replace('XXXX', 'XL')
+    numeral = numeral.replace('CCCC', 'CD')
+    return numeral
+
+
+def convert_to_roman_normal(number: int):
+    numeral = convert_to_roman_base(number)
+    numeral = replace_4_clusters(numeral)
+    return numeral
+
+
+def replace_3_clusters(numeral):
+    numeral = numeral.replace('VIII', 'IIX')
+    numeral = numeral.replace('LXXX', 'XXC')
+    numeral = numeral.replace('DCCC', 'CCM')
+
+    numeral = numeral.replace('III', 'IIV')
+    numeral = numeral.replace('XXX', 'XXL')
+    numeral = numeral.replace('CCC', 'CCD')
+    return numeral
+
+
+def convert_to_roman_short(number: int):
+    numeral = convert_to_roman_normal(number)
+    numeral = replace_3_clusters(numeral)
     return numeral
